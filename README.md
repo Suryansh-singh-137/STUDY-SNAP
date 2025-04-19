@@ -7,7 +7,7 @@ Hackzard 2025 Submission 🚀
 
 ## 🔗 Links
 
-- 🔴 **Live Project**: [Visit StudySnap]((https://statuesque-crisp-0d8e4d.netlify.app/))
+- 🔴 **Live Project**: [Visit StudySnap](https://statuesque-crisp-0d8e4d.netlify.app/)
 - 🟣 **GitHub Repo**: [View on GitHub](https://github.com/Suryansh-singh-137/studysnap)
 - 📽️ **Demo Video**: [Watch on YouTube](https://your-demo-video-link)
 - 📊 **Slides**: [View Presentation](https://your-slides-link)
