@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduGroq</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #1e3c72, #2a5298);
+        color: #fff;
+        padding: 20px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #00ffff;
+      }
+      nav a {
+        margin: 0 1rem;
+        text-decoration: none;
+        color: #eee;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .hero {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      .hero h1 {
+        font-size: 3rem;
+        color: #00ffff;
+        margin-bottom: 1rem;
+      }
+      .hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        color: #ddd;
+      }
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+      .feature-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 1.2rem;
+        border-radius: 16px;
+        text-align: center;
+        width: 200px;
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+      .feature-card:hover {
+        transform: translateY(-6px);
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .chat-container {
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #responseOutput {
+        font-size: 1.2rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        max-width: 800px;
+        width: 100%;
+        color: #fff;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      }
+      .input-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        max-width: 800px;
+        width: 100%;
+      }
+      .input-section input[type="text"] {
+        flex: 1;
+        padding: 1rem;
+        border-radius: 12px;
+        border: none;
+        font-size: 1rem;
+        background-color: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+      .input-section input::placeholder {
+        color: #aaa;
+      }
+      .input-section button {
+        padding: 1rem 1.2rem;
+        border: none;
+        background-color: #00bcd4;
+        color: white;
+        font-size: 1rem;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+        transition: background-color 0.3s ease;
+      }
+      .input-section button:hover {
+        background-color: #00a1ba;
+      }
+      input[type="file"] {
+        margin-top: 1rem;
+        color: #fff;
+      }
+      #spinner {
+        display: none;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        color: #00ffff;
+      }
+      #notesModal,
+      #quizModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+      }
+      #notesBox,
+      #quizBox {
+        background: #1c1c2b;
+        padding: 2rem;
+        border-radius: 16px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        color: #fff;
+      }
+      #notesBox h2,
+      #quizBox h2 {
+        margin-bottom: 1rem;
+      }
+      #notesBox div {
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+      .delete-btn {
+        float: right;
+        background: none;
+        border: none;
+        color: #ff6666;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+      #quizBox input {
+        width: 100%;
+        padding: 0.8rem;
+        margin-top: 1rem;
+        border-radius: 8px;
+        border: none;
+      }
+      #quizFeedback {
+        margin-top: 1rem;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">EduGroq</div>
+      <nav>
+        <a onclick="location.reload()">Home</a>
+        <a onclick="showNotes()">My Notes</a>
+        <a onclick="startQuiz()">Quiz Me</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>Learn Faster with Multimodal AI</h1>
+      <p>
+        Ask questions using text, voice, or images and get personalized,
+        in-depth explanations powered by Groq's ultra-fast inference.
+      </p>
+    </section>
+
+    <section class="features">
+      <div class="feature-card">📝 Text Input</div>
+      <div class="feature-card">🎤 Voice Interaction</div>
+      <div class="feature-card">📷 Image Upload</div>
+      <div class="feature-card">🔊 Text-to-Speech</div>
+      <div class="feature-card">💾 Flashcards</div>
+      <div class="feature-card">🧠 Smart Memory</div>
+    </section>
+
+    <section class="chat-container">
+      <div id="spinner">🔄 Loading...</div>
+      <div id="responseOutput">Ask something to get started...</div>
+      <div class="input-section">
+        <input type="text" id="userInput" placeholder="Type a question..." />
+        <button onclick="handleInput()">Submit</button>
+        <button onclick="startVoiceInput()">🎤</button>
+        <button onclick="saveNote()">💾</button>
+        <button onclick="speakOutput()">🔊</button>
+        <button onclick="stopSpeech()">⏹</button>
+      </div>
+      <input type="file" id="imageUpload" accept="image/*" />
+      <img
+        id="imagePreview"
+        style="max-width: 100%; margin-top: 10px; display: none"
+      />
+    </section>
+
+    <!-- Notes Modal -->
+    <div id="notesModal">
+      <div id="notesBox">
+        <h2>Saved Notes</h2>
+        <div id="notesList"></div>
+        <button onclick="closeNotesModal()">Close</button>
+      </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div id="quizModal">
+      <div id="quizBox">
+        <h2>Flashcard Quiz</h2>
+        <div id="quizQuestion"></div>
+        <input type="text" id="quizAnswer" placeholder="Your answer..." />
+        <div id="quizFeedback"></div>
+        <button onclick="submitAnswer()">Submit</button>
+        <button onclick="nextQuestion()">Next</button>
+        <button onclick="closeQuiz()">Close</button>
+      </div>
+    </div>
+
+    <script>
+      const apiKey = "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";
+
+      function toggleSpinner(show) {
+        document.getElementById("spinner").style.display = show
+          ? "block"
+          : "none";
+      }
+
+      async function askGroq(prompt) {
+        toggleSpinner(true);
+        document.getElementById("responseOutput").textContent = "";
+
+        try {
+          const res = await fetch(
+            "https://api.groq.com/openai/v1/chat/completions",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${apiKey}`,
+              },
+              body: JSON.stringify({
+                model: "llama3-8b-8192",
+                messages: [{ role: "user", content: prompt }],
+              }),
+            }
+          );
+
+          const data = await res.json();
+          const output = data.choices[0].message.content;
+          document.getElementById("responseOutput").textContent = output;
+          localStorage.setItem("lastResponse", output);
+        } catch (err) {
+          console.error(err);
+          document.getElementById("responseOutput").textContent =
+            "Error fetching response.";
+        } finally {
+          toggleSpinner(false);
+        }
+      }
+
+      function handleInput() {
+        const input = document.getElementById("userInput").value;
+        if (input.trim()) askGroq(input);
+      }
+
+      function startVoiceInput() {
+        const recognition = new (window.SpeechRecognition ||
+          window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = function (event) {
+          const transcript = event.results[0][0].transcript;
+          document.getElementById("userInput").value = transcript;
+          askGroq(transcript);
+        };
+
+        recognition.onerror = function (event) {
+          console.error("Speech recognition error", event.error);
+        };
+
+        recognition.start();
+      }
+
+      function speakOutput() {
+        const text = document.getElementById("responseOutput").textContent;
+        if (!text.trim()) return;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        speechSynthesis.speak(utterance);
+      }
+
+      function stopSpeech() {
+        if (speechSynthesis.speaking) {
+          speechSynthesis.cancel();
+        }
+      }
+
+      function saveNote() {
+        const input = document.getElementById("userInput").value;
+        const response = document.getElementById("responseOutput").textContent;
+        if (!response.trim()) return alert("No response to save!");
+        const notes = JSON.parse(localStorage.getItem("edugroq_notes") || "[]");
+        notes.push({ input, response });
+        localStorage.setItem("edugroq_notes", JSON.stringify(notes));
+        alert("Note saved!");
+      }
+
+      function showNotes() {
+        const notes = JSON.parse(localStorage.getItem("edugroq_notes") || "[]");
+        const notesList = document.getElementById("notesList");
+        notesList.innerHTML = "";
+
+        notes.forEach((note, index) => {
+          const div = document.createElement("div");
+          div.innerHTML = `
+        <strong>${index + 1}) Q:</strong> ${note.input}<br/>
+        <strong>A:</strong> ${note.response}
+        <button class="delete-btn" onclick="deleteNote(${index})">🗑 Delete</button>
+      `;
+          notesList.appendChild(div);
+        });
+
+        document.getElementById("notesModal").style.display = "flex";
+      }
+
+      function deleteNote(index) {
+        const notes = JSON.parse(localStorage.getItem("edugroq_notes") || "[]");
+        notes.splice(index, 1);
+        localStorage.setItem("edugroq_notes", JSON.stringify(notes));
+        showNotes();
+      }
+
+      function closeNotesModal() {
+        document.getElementById("notesModal").style.display = "none";
+      }
+
+      // OCR Image Upload with Preview
+      document
+        .getElementById("imageUpload")
+        .addEventListener("change", function () {
+          const file = this.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const preview = document.getElementById("imagePreview");
+            if (preview) {
+              preview.src = e.target.result;
+              preview.style.display = "block";
+            }
+          };
+          reader.readAsDataURL(file);
+
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("language", "eng");
+          formData.append("isOverlayRequired", "false");
+
+          toggleSpinner(true);
+          fetch("https://api.ocr.space/parse/image", {
+            method: "POST",
+            headers: {
+              apikey: "K89941829188957",
+            },
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              toggleSpinner(false);
+              const extractedText = data?.ParsedResults?.[0]?.ParsedText;
+              if (!extractedText) {
+                document.getElementById("responseOutput").textContent =
+                  "No text found in image.";
+                return;
+              }
+              document.getElementById("userInput").value = extractedText;
+              askGroq(extractedText);
+            })
+            .catch((err) => {
+              console.error("OCR error:", err);
+              toggleSpinner(false);
+              document.getElementById("responseOutput").textContent =
+                "Failed to process image.";
+            });
+        });
+
+      // Quiz Logic
+      let quizData = [];
+      let currentQuizIndex = 0;
+
+      function startQuiz() {
+        const notes = JSON.parse(localStorage.getItem("edugroq_notes") || "[]");
+        if (notes.length === 0) {
+          alert("No notes available for quiz.");
+          return;
+        }
+
+        quizData = [...notes];
+        shuffleArray(quizData);
+        currentQuizIndex = 0;
+
+        document.getElementById("quizModal").style.display = "flex";
+        showQuizQuestion();
+      }
+
+      function showQuizQuestion() {
+        if (currentQuizIndex >= quizData.length) {
+          document.getElementById("quizQuestion").innerHTML =
+            "🎉 You've finished all questions!";
+          document.getElementById("quizAnswer").style.display = "none";
+          document.getElementById("quizFeedback").textContent = "";
+          return;
+        }
+
+        const current = quizData[currentQuizIndex];
+        document.getElementById("quizQuestion").innerHTML = `<strong>Q${
+          currentQuizIndex + 1
+        }:</strong> ${current.input}`;
+        document.getElementById("quizAnswer").value = "";
+        document.getElementById("quizAnswer").style.display = "block";
+        document.getElementById("quizFeedback").textContent = "";
+      }
+
+      function submitAnswer() {
+        const userAnswer = document
+          .getElementById("quizAnswer")
+          .value.trim()
+          .toLowerCase();
+        const correctAnswer = quizData[currentQuizIndex].response
+          .trim()
+          .toLowerCase();
+
+        if (!userAnswer) return;
+
+        const isCorrect =
+          correctAnswer.includes(userAnswer) ||
+          userAnswer.includes(correctAnswer);
+        document.getElementById("quizFeedback").textContent = isCorrect
+          ? "✅ Correct!"
+          : `❌ Incorrect. Correct answer: ${quizData[currentQuizIndex].response}`;
+      }
+
+      function nextQuestion() {
+        currentQuizIndex++;
+        showQuizQuestion();
+      }
+
+      function closeQuiz() {
+        document.getElementById("quizModal").style.display = "none";
+      }
+
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+    </script>
+  </body>
+</html>
