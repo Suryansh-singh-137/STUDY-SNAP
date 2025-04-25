@@ -9,8 +9,8 @@ Hackzard 2025 Submission 🚀
 
 - 🔴 **Live Project**: [Visit StudySnap](https://statuesque-crisp-0d8e4d.netlify.app/)
 - 🟣 **GitHub Repo**: [View on GitHub](https://github.com/Suryansh-singh-137/studysnap)
-- 📽️ **Demo Video**: [Watch on VIOME](https://your-demo-video-link](https://vimeo.com/1078603225/57068acaaa)
-- 📊 **Slides**: [View Presentation](file:///C:/Users/surya/OneDrive/Desktop/INVINCIBLES.pdf)
+- 📽️ **Demo Video**: [Watch on VIMEO]([https://vimeo.com/1078603225/57068acaaa)
+- 📊 **Slides**: [View Presentation](https://drive.google.com/file/d/1Rd8HGwChoGAG-v4heffATpvRYQVDIxpS/view)
 
 ---
 
